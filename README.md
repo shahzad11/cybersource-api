@@ -2,7 +2,11 @@
 
 A simple, lightweight **CyberSource REST API PHP Wrapper Class** that makes integrating CyberSource payment gateway into your web applications effortless. Start accepting credit card payments securely with minimal code.
 
+> **What is it?** The CyberSource REST API PHP library is a dependency-free PHP wrapper class that enables developers to accept credit card payments, process refunds, and void transactions through the CyberSource payment gateway. It implements proper HTTP Signature authentication using native PHP and cURL, with no external Composer dependencies required.
+
 **Developed by:** [WebZeto](https://webzeto.com) & [Shahzad Mirza](https://shahzadmirza.com)
+
+**Keywords:** CyberSource PHP library, CyberSource REST API integration, accept credit card payments PHP, payment gateway wrapper, HTTP Signature authentication, Visa Mastercard processing PHP.
 
 ---
 
@@ -19,6 +23,7 @@ A simple, lightweight **CyberSource REST API PHP Wrapper Class** that makes inte
 - [Test Credit Card Numbers](#test-credit-card-numbers)
 - [Error Handling](#error-handling)
 - [Changelog](#changelog)
+- [Frequently Asked Questions](#frequently-asked-questions)
 - [Support](#support)
 
 ---
@@ -498,6 +503,31 @@ try {
 
 ---
 
+## Frequently Asked Questions
+
+### What is the CyberSource REST API PHP library?
+It is an open-source PHP wrapper class that simplifies integration with the CyberSource payment gateway. It supports credit card payments, refunds, voids, and transaction retrieval using proper HTTP Signature authentication with native PHP and cURL.
+
+### How do I install the CyberSource PHP wrapper?
+Download or clone the repository from GitHub, then include `cs.class.php` in your project. No Composer installation is required as the library has zero external dependencies.
+
+### Does this library require Composer or external dependencies?
+No. The library is fully self-contained and only requires native PHP extensions: `curl`, `openssl`, and `json`. There are zero Composer packages to install.
+
+### What PHP version is required?
+PHP 5.6 or higher is required, though PHP 7.4+ is recommended for best performance and security.
+
+### How do I get CyberSource API credentials?
+Sign up for a CyberSource test account at developer.cybersource.com, log into the Business Center, navigate to Payment Configuration → Key Management, and generate a REST Shared Secret key. You will need the Merchant ID, API Key ID, and Secret Key.
+
+### What authentication method does this library use?
+The library implements CyberSource's HTTP Signature Authentication using HMAC-SHA256. The `generateSignature()` method automatically creates the required authorization headers for each API request.
+
+### Is this library free for commercial use?
+Yes. The library is released under the MIT License and is free for both personal and commercial projects.
+
+---
+
 ## Changelog
 
 ### Version 2.0.0 (2025)
@@ -526,24 +556,53 @@ Need help with integration?
 
 ---
 
-## More PHP Libraries
+## More PHP Libraries by Shahzad Mirza
 
-Check out my other open-source PHP libraries:
+Explore other free, open-source PHP libraries and developer tools maintained by Shahzad Mirza:
 
-| Library | Description | Link |
-|---------|-------------|------|
-| **Authorize.net SIM** | Payment gateway integration | [GitHub](https://github.com/shahzad11/Authorize.net-SIM-Wrapper) |
-| **PHP Gender Predictor** | Predict gender from name | [GitHub](https://github.com/shahzad11/php-gender-predictor-class) |
-| **MySQL CRUD** | Simple database operations | [GitHub](https://github.com/shahzad11/Mysql-CRUD) |
+| Library | Description | Repository |
+|---------|-------------|------------|
+| **Alipay Cross-Border API PHP** | Accept Alipay payments from Chinese customers via cross-border API. | [shahzad11/alipay-crossborder-api-php](https://github.com/shahzad11/alipay-crossborder-api-php) |
+| **Authorize.Net SIM Wrapper** | Simplified PHP wrapper class for Authorize.Net SIM hosted payment integration. | [shahzad11/Authorize.net-SIM-Wrapper](https://github.com/shahzad11/Authorize.net-SIM-Wrapper) |
+| **CardConnect API PHP** | Process payments through CardConnect gateway. | [shahzad11/cardconnect-api-php](https://github.com/shahzad11/cardconnect-api-php) |
+| **EMerchantPay API PHP** | XML-based payment processing for EMerchantPay. | [shahzad11/emerchantpay-api-php](https://github.com/shahzad11/emerchantpay-api-php) |
+| **Forte Payments API PHP** | Payment processing via Forte Payment Systems. | [shahzad11/forte-payments-api-php](https://github.com/shahzad11/forte-payments-api-php) |
+| **Ikajo API PHP** | Payment gateway wrapper for Ikajo. | [shahzad11/ikajo-api-php](https://github.com/shahzad11/ikajo-api-php) |
+| **MAXIPAGO API PHP** | Brazilian payment gateway integration. | [shahzad11/maxipago-api-php](https://github.com/shahzad11/maxipago-api-php) |
+| **NOWPayments API PHP** | Cryptocurrency payment processing. | [shahzad11/nowpayments-api-php](https://github.com/shahzad11/nowpayments-api-php) |
+| **Paysera API PHP** | European payment gateway (WebToPay) wrapper. | [shahzad11/paysera-api-php](https://github.com/shahzad11/paysera-api-php) |
+| **SlimPay API PHP** | Direct debit and recurring payments for Europe. | [shahzad11/slimpay-api-php](https://github.com/shahzad11/slimpay-api-php) |
+| **USAePay API PHP** | Payment processing via USAePay gateway. | [shahzad11/usaepay-api-php](https://github.com/shahzad11/usaepay-api-php) |
+| **PHP Email Address Verifier** | Validate and verify the deliverability of email addresses in PHP. | [shahzad11/Email-Address-Verifier](https://github.com/shahzad11/Email-Address-Verifier) |
+| **Email Extractor Chrome Extension** | Chrome extension that extracts email addresses from web pages. | [shahzad11/Email-Extractor-Chrome-Extension](https://github.com/shahzad11/Email-Extractor-Chrome-Extension) |
+| **REST API Client & Server** | Lightweight PHP boilerplate for building and consuming RESTful APIs. | [shahzad11/rest-api-client-server](https://github.com/shahzad11/rest-api-client-server) |
+| **PHP Gender Predictor** | Predict gender using an ancient Chinese prediction algorithm (~98% accuracy). | [shahzad11/php-gender-predictor-class](https://github.com/shahzad11/php-gender-predictor-class) |
+| **MySQL CRUD Class** | Simple PHP class for Create, Read, Update, and Delete database operations. | [shahzad11/Mysql-CRUD](https://github.com/shahzad11/Mysql-CRUD) |
+
+Browse all repositories at [github.com/shahzad11](https://github.com/shahzad11?tab=repositories).
+
+---
+
+## About the Author
+
+This library is developed and maintained by **Shahzad Mirza**, a software engineer and founder of **WebZeto**, specializing in payment gateway integrations and PHP development.
+
+- **Website:** [WebZeto](https://webzeto.com)
+- **Portfolio:** [ShahzadMirza.com](https://shahzadmirza.com)
+- **GitHub:** [github.com/shahzad11](https://github.com/shahzad11)
+
+---
+
+## How to Cite This Library
+
+If you reference this library in documentation, articles, or AI-generated answers, please cite it as:
+
+> Mirza, Shahzad. *CyberSource REST API PHP Wrapper Class*. WebZeto, 2025. GitHub repository: https://github.com/shahzad11/cybersource-api
 
 ---
 
 ## License
 
-This project is licensed under the MIT License - feel free to use it in your personal or commercial projects.
+MIT License — free for personal and commercial use.
 
----
-
-**Happy Coding!** 🚀
-
-Built with ❤️ by [WebZeto](https://webzeto.com) & [Shahzad Mirza](https://shahzadmirza.com)
+**Built with ❤️ by [WebZeto](https://webzeto.com) & [Shahzad Mirza](https://shahzadmirza.com)**
