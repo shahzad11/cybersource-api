@@ -1,106 +1,549 @@
-# Cybersource Rest API Wrapper Class
-If you want to integrate Cybersource payment gateway in your web applications, we have developed a really simple **Cybersource Rest API Wrapper Class in PHP** which you can use conveniently and start charging credit cards using Cybersource Payment Gateway.
+# CyberSource REST API PHP Wrapper Class
 
-## Cybersource Payment Gateway Integration
-Integrating Cybersource is neverthless easier for you. You may want to intgrate simple order API. There are two types of Cybersource Rest API endpoints which you can use for testing or in production. Here are the Cybersouce Rest API endpoints.
+A simple, lightweight **CyberSource REST API PHP Wrapper Class** that makes integrating CyberSource payment gateway into your web applications effortless. Start accepting credit card payments securely with minimal code.
 
-[Download Cybersource API](https://github.com/shahzad11/cybersource-api/archive/master.zip)
+**Developed by:** [WebZeto](https://webzeto.com) & [Shahzad Mirza](https://shahzadmirza.com)
 
-**1. Rest API Endpoint for Testing**
-`https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.26.wsdl`
+---
 
-**2. Rest API Endpoint for Production**
-`https://ics2wsa.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.26.wsdl`
+## Table of Contents
 
-## Cybersource Test Account
-If you want to use this API library, you should have a Cybersource test merchant account in hand. It will allow you to generate the following essential credetials.
-`MERCHANT_ID` and `MERCHANT_ID` [Signup for Cybersource Test Account](https://developer.cybersource.com/hello-world/sandbox.html).
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [CyberSource API Endpoints](#cybersource-api-endpoints)
+- [Getting Credentials](#getting-credentials)
+- [Quick Start](#quick-start)
+- [Usage Examples](#usage-examples)
+- [API Reference](#api-reference)
+- [Test Credit Card Numbers](#test-credit-card-numbers)
+- [Error Handling](#error-handling)
+- [Changelog](#changelog)
+- [Support](#support)
 
-## Cybersource Simple Order Api
-Here is how you can use this Cybersource Simple Order API in your PHP web applications.
+---
 
-First of all, you may want to include the cybersource library like the following.
-`include('cs.class.php');`
-Now initialize Cybersource object.
-`$cs_request	=	new cyber_source();`
+## Overview
 
-Add credit card number you want to charge.
-```sh
-$cs_request->add_credit_card_details(
-  array(
-    "accountNumber" 	=> 'Credit Card Number',
-    "expirationMonth"	=>'Credit Card Expiration Month',
-    "expirationYear"	=>'Credit Card Expiration Year',
-    "cvv" 		=>'Credit Card Security Code'
-  )
-);
+This library provides a clean, intuitive interface to CyberSource's modern **REST API** with **HTTP Signature Authentication**. It's designed to be:
+
+- **Simple**: Minimal setup, clear method names
+- **Secure**: Implements proper HTTP Signature authentication
+- **Compatible**: Works with both old and new CyberSource API versions
+- **Lightweight**: No external dependencies, just pure PHP
+
+### Key Features
+
+- Process credit card payments (authorize & capture)
+- Retrieve transaction details
+- Issue refunds
+- Void transactions
+- Automatic request signing with HMAC-SHA256
+- Comprehensive error handling
+- Backward compatibility with legacy code
+
+---
+
+## Requirements
+
+- PHP 5.6+ (PHP 7.4+ recommended)
+- cURL extension enabled
+- OpenSSL extension enabled
+
+---
+
+## Installation
+
+### Option 1: Download Directly
+
+[Download CyberSource API Wrapper](https://github.com/shahzad11/cybersource-api/archive/master.zip)
+
+### Option 2: Clone via Git
+
+```bash
+git clone https://github.com/shahzad11/cybersource-api.git
 ```
 
-Now add the billing address of the customer.
+### Option 3: Include in Your Project
 
-```sh
+Simply include the `cs.class.php` file in your project:
 
-$cs_request->add_billing_info(
-   array(
-   "firstName" 		=>	'Billing first name',
-   "lastName"		=>	'Billing last name',
-   "street1"		=>	'Billing Street address',
-   "city" 		=>	'Billing city',
-   "state"		=>	'Billing state',
-   "postalCode"		=>	'Billing ZipCode/postalCode',
-   "country" 		=>	'Billing country',
-   "email"		=>	'Billing email address',
-   "ipAddress"		=>	$_SERVER['REMOTE_ADDR']/* pulling customer's IP and sending to CS*/
-   )
- );
+```php
+require_once 'cs.class.php';
 ```
 
-Its time to add product(s) data like the following.
+---
 
-```sh
+## CyberSource API Endpoints
 
-$cs_request->add_item(
-  array(
-  "unitPrice" 	=>	'9.80',
-  "quantity"	=>	1,
-  "id"		=>	'order_id' /* a unique order ID which you want to send and get back from CS for tracking*/
-  )
-);
+The library automatically handles the correct endpoints based on your environment:
 
+| Environment | Endpoint URL |
+|-------------|--------------|
+| **Test/Sandbox** | `https://apitest.cybersource.com` |
+| **Production** | `https://api.cybersource.com` |
+
+---
+
+## Getting Credentials
+
+To use this library, you'll need credentials from your CyberSource Business Center:
+
+1. **[Sign up for a CyberSource Test Account](https://developer.cybersource.com/hello-world/sandbox.html)**
+2. Log into the [CyberSource Business Center](https://ebctest.cybersource.com/)
+3. Navigate to **Payment Configuration** → **Key Management**
+4. Generate a new **REST - Shared Secret** key
+5. Note down:
+   - **Merchant ID**
+   - **API Key ID** (the key ID)
+   - **Secret Key** (base64 encoded shared secret)
+
+---
+
+## Quick Start
+
+Here's a minimal example to process a payment:
+
+```php
+<?php
+require_once 'cs.class.php';
+
+// Configuration
+$config = [
+    'merchantID'  => 'your_merchant_id',
+    'apiKeyID'    => 'your_api_key_id',
+    'secretKey'   => 'your_secret_key'
+];
+
+// Initialize API
+$cs = new CyberSourceAPI($config, 'test');
+
+// Add payment details
+$cs->addCreditCardDetails([
+    'number'          => '4111111111111111',
+    'expirationMonth' => '12',
+    'expirationYear'  => '2030',
+    'securityCode'    => '999'
+]);
+
+// Add billing info
+$cs->addBillingInfo([
+    'firstName'          => 'John',
+    'lastName'           => 'Doe',
+    'address1'           => '1 Market Street',
+    'locality'           => 'San Francisco',
+    'administrativeArea' => 'CA',
+    'postalCode'         => '94105',
+    'country'            => 'US',
+    'email'              => 'customer@example.com'
+]);
+
+// Set amount
+$cs->addOrderAmount([
+    'totalAmount' => '99.99',
+    'currency'    => 'USD'
+]);
+
+// Process payment
+$response = $cs->runTransaction();
+
+// Check result
+if ($response['success']) {
+    echo "Payment successful! Transaction ID: " . $response['transactionId'];
+} else {
+    echo "Payment failed: " . $response['reasonCode'];
+}
+?>
 ```
 
-Run transansaction and you are done.
+---
 
-```sh
+## Usage Examples
+
+### Example 1: Process a Payment (Authorize & Capture)
+
+```php
+<?php
+require_once 'cs.class.php';
+
+try {
+    $config = [
+        'merchantID'  => 'your_merchant_id',
+        'apiKeyID'    => 'your_api_key_id',
+        'secretKey'   => 'your_secret_key'
+    ];
+    
+    $cs = new CyberSourceAPI($config, 'test');
+    
+    // Add credit card
+    $cs->addCreditCardDetails([
+        'number'          => '4111111111111111',
+        'expirationMonth' => '12',
+        'expirationYear'  => '2030',
+        'securityCode'    => '999'
+    ]);
+    
+    // Add billing information
+    $cs->addBillingInfo([
+        'firstName'          => 'John',
+        'lastName'           => 'Doe',
+        'address1'           => '1 Market Street',
+        'locality'           => 'San Francisco',
+        'administrativeArea' => 'CA',
+        'postalCode'         => '94105',
+        'country'            => 'US',
+        'email'              => 'john.doe@example.com',
+        'phoneNumber'        => '4155550123'
+    ]);
+    
+    // Set order amount
+    $cs->addOrderAmount([
+        'totalAmount' => '150.00',
+        'currency'    => 'USD'
+    ]);
+    
+    // Set custom order reference (optional)
+    $cs->setClientReferenceCode('ORDER-12345');
+    
+    // Process payment
+    $response = $cs->runTransaction();
+    
+    if ($response['success']) {
+        echo "Transaction ID: " . $response['transactionId'] . "\n";
+        echo "Status: " . $response['status'] . "\n";
+        echo "Amount: " . $response['amount'] . " " . $response['currency'] . "\n";
+        
+        // Save transaction ID to your database
+        // saveToDatabase($response['transactionId']);
+    }
+    
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+```
+
+### Example 2: Legacy Compatibility Mode
+
+For existing code using the old SOAP API:
+
+```php
+<?php
+require_once 'cs.class.php';
+
+// Old code still works with the new class
+$cs_request = new cyber_source([
+    'merchantID'  => 'your_merchant_id',
+    'apiKeyID'    => 'your_api_key_id',
+    'secretKey'   => 'your_secret_key'
+], 'test');
+
+// Legacy method calls still work
+$cs_request->add_credit_card_details([
+    "accountNumber"   => '4111111111111111',
+    "expirationMonth" => '12',
+    "expirationYear"  => '2030',
+    "cvv"             => '999'
+]);
+
+$cs_request->add_billing_info([
+    "firstName"  => 'John',
+    "lastName"   => 'Doe',
+    "street1"    => '1 Market Street',
+    "city"       => 'San Francisco',
+    "state"      => 'CA',
+    "postalCode" => '94105',
+    "country"    => 'US',
+    "email"      => 'john@example.com'
+]);
+
+$cs_request->add_item([
+    "unitPrice" => '99.99',
+    "quantity"  => 1,
+    "id"        => 'ORDER-12345'
+]);
 
 $reply = $cs_request->runTransaction();
 
-print_r($reply);
-
+// Check for success (reasonCode 100 = success)
+if ($reply['reasonCode'] == 100) {
+    echo "Payment successful!";
+}
+?>
 ```
 
-The `$reply` string holds Cybersource Rest API response, If you receive `$reply['reasonCode']==100` The payment is charged, you can now use it in case you want to mark your payment completed in your database.
+### Example 3: Retrieve Transaction Details
 
+```php
+<?php
+require_once 'cs.class.php';
 
-## Cybersource Test Credit Card Numbers
-| Credit Card Type | Credit Card Number |  Credit Card Number | CVV |
-| ------ | ------ | ------ | ------ |
-| VISA | 4111 1111 11111 1111 | 10/2026 | 999 |
-| MasterCard | 2222 4200 0000 1113 | 10/2026 | 999 |
-|  | 2222 6300 0000 1125 | 10/2026 | 999 |
-|  | 5555 5555 5555 4444 | 10/2026 | 999 |
-| American Express  | 3782 8224 6310 005 | 10/2026 | 999 |
-| Discover  | 6011 1111 1111 1117 | 10/2026 | 999 |
-| JCB | 3566 1111 1111 1113 | 10/2026 | 999 |
+$config = [
+    'merchantID'  => 'your_merchant_id',
+    'apiKeyID'    => 'your_api_key_id',
+    'secretKey'   => 'your_secret_key'
+];
 
-## Cybersource Error Codes
+$cs = new CyberSourceAPI($config, 'test');
 
-## Checkout My Other Libraries on Github
+// Get details of a previous transaction
+$transactionId = 'your_transaction_id';
+$response = $cs->getTransaction($transactionId);
 
-Here are few more PHP libraries programmed by me, have a look if you need it.
+print_r($response);
+?>
+```
 
-| Site Name | URL |
-| ------ | ------ |
-| Authorize.net API (SIM) Wrapper Class | https://github.com/shahzad11/Authorize.net-SIM-Wrapper |
-| PHP Gender Predictor | https://github.com/shahzad11/php-gender-predictor-class |
-| MySql CRUD | https://github.com/shahzad11/Mysql-CRUD |
+### Example 4: Process a Refund
+
+```php
+<?php
+require_once 'cs.class.php';
+
+$config = [
+    'merchantID'  => 'your_merchant_id',
+    'apiKeyID'    => 'your_api_key_id',
+    'secretKey'   => 'your_secret_key'
+];
+
+$cs = new CyberSourceAPI($config, 'test');
+
+// Refund a previous transaction
+$transactionId = 'your_transaction_id';
+
+// Full refund
+$response = $cs->refundTransaction($transactionId);
+
+// Or partial refund with specific amount
+// $response = $cs->refundTransaction($transactionId, 50.00, 'USD');
+
+if ($response['success']) {
+    echo "Refund processed! Refund ID: " . $response['transactionId'];
+}
+?>
+```
+
+### Example 5: Void a Transaction
+
+```php
+<?php
+require_once 'cs.class.php';
+
+$config = [
+    'merchantID'  => 'your_merchant_id',
+    'apiKeyID'    => 'your_api_key_id',
+    'secretKey'   => 'your_secret_key'
+];
+
+$cs = new CyberSourceAPI($config, 'test');
+
+// Void a transaction before settlement
+$transactionId = 'your_transaction_id';
+$response = $cs->voidTransaction($transactionId);
+
+if ($response['success']) {
+    echo "Transaction voided successfully!";
+}
+?>
+```
+
+---
+
+## API Reference
+
+### Class: `CyberSourceAPI`
+
+#### Constructor
+
+```php
+$cs = new CyberSourceAPI(array $config, string $environment = 'test');
+```
+
+**Parameters:**
+- `$config` - Array containing:
+  - `merchantID` (string) - Your CyberSource Merchant ID
+  - `apiKeyID` (string) - Your API Key ID
+  - `secretKey` (string) - Your Secret Key (base64 encoded)
+- `$environment` (string) - `'test'` or `'production'`
+
+#### Methods
+
+##### `addCreditCardDetails(array $cc_data)`
+Add credit card information.
+
+**Parameters:**
+- `number` or `accountNumber` (string) - Card number
+- `expirationMonth` (string) - MM format
+- `expirationYear` (string) - YYYY format
+- `securityCode` or `cvv` (string, optional) - CVV/CVC
+
+##### `addBillingInfo(array $billing_info)`
+Add billing address.
+
+**Parameters:**
+- `firstName` (string)
+- `lastName` (string)
+- `address1` or `street1` (string) - Street address
+- `locality` or `city` (string)
+- `administrativeArea` or `state` (string)
+- `postalCode` (string)
+- `country` (string) - 2-letter ISO code
+- `email` (string)
+- `phoneNumber` (string, optional)
+
+##### `addOrderAmount(array $amount_data)`
+Set order amount.
+
+**Parameters:**
+- `totalAmount` or `amount` (string) - Transaction amount
+- `currency` (string) - 3-letter ISO code (default: 'USD')
+
+##### `addItem(array $item_info)` - Legacy
+Legacy method for backward compatibility.
+
+**Parameters:**
+- `unitPrice` (string)
+- `quantity` (int)
+- `id` (string) - Order ID
+
+##### `setClientReferenceCode(string $code)`
+Set custom order reference number.
+
+##### `setProcessingOptions(array $options)`
+Configure processing behavior.
+
+**Parameters:**
+- `capture` (bool) - Auto-capture (default: true)
+- `commerceIndicator` (string) - e.g., 'internet'
+
+##### `runTransaction()`
+Execute the payment transaction.
+
+**Returns:** Array containing:
+- `success` (bool)
+- `status` (string) - 'ACCEPTED' or 'REJECTED'
+- `reasonCode` (int/string) - 100 = success
+- `transactionId` (string)
+- `referenceNumber` (string)
+- `amount` (string)
+- `currency` (string)
+- `approvalCode` (string, if available)
+- `cardType` (string, if available)
+- `rawResponse` (array) - Full API response
+
+##### `getTransaction(string $transactionId)`
+Retrieve transaction details.
+
+##### `refundTransaction(string $transactionId, float $amount = null, string $currency = 'USD')`
+Refund a transaction. Omit amount for full refund.
+
+##### `voidTransaction(string $transactionId)`
+Void/cancel a transaction before settlement.
+
+##### `reset()`
+Clear request data for a new transaction.
+
+---
+
+## Test Credit Card Numbers
+
+Use these test card numbers in the sandbox environment:
+
+| Card Type | Number | Expiry | CVV |
+|-----------|----------|--------|-----|
+| **Visa** | 4111111111111111 | 12/2030 | 999 |
+| **Mastercard** | 5555555555554444 | 12/2030 | 999 |
+| **Mastercard (2-series)** | 2222420000001113 | 12/2030 | 999 |
+| **American Express** | 378282246310005 | 12/2030 | 999 |
+| **Discover** | 6011111111111117 | 12/2030 | 999 |
+| **JCB** | 3566111111111113 | 12/2030 | 999 |
+| **Diners Club** | 3055155515150015 | 12/2030 | 999 |
+
+---
+
+## Error Handling
+
+The library throws `Exception` objects for API errors. Always wrap calls in try-catch blocks:
+
+```php
+try {
+    $response = $cs->runTransaction();
+} catch (Exception $e) {
+    // Log error
+    error_log('Payment error: ' . $e->getMessage());
+    
+    // Show user-friendly message
+    echo "Unable to process payment. Please try again.";
+}
+```
+
+### Common Reason Codes
+
+| Code | Meaning |
+|------|---------|
+| 100 | Successful transaction |
+| 101 | Request is missing one or more fields |
+| 102 | One or more fields contain invalid data |
+| 104 | The access key ID was not found |
+| 110 | Partial amount was approved |
+| 150 | General system failure |
+| 151 | The request was received but timed out |
+| 200 | Soft decline - authorization was declined |
+| 201 | Issuing bank unavailable |
+| 202 | Expired card |
+| 203 | Declined - general decline |
+| 204 | Insufficient funds |
+| 208 | Lost or stolen card |
+| 209 | Invalid CVV |
+
+---
+
+## Changelog
+
+### Version 2.0.0 (2025)
+- **BREAKING**: Migrated from SOAP/WSDL to REST API
+- **NEW**: HTTP Signature Authentication (HMAC-SHA256)
+- **NEW**: Support for modern CyberSource API endpoints
+- **NEW**: Added `getTransaction()`, `refundTransaction()`, `voidTransaction()` methods
+- **NEW**: Response normalization for consistent handling
+- **NEW**: Full backward compatibility with legacy code
+- **NEW**: Support for PHP 5.6+ and PHP 8.x
+- **IMPROVED**: Better error handling and validation
+- **IMPROVED**: Comprehensive documentation and examples
+
+### Version 1.0 (Legacy)
+- SOAP/WSDL API support (now deprecated by CyberSource)
+
+---
+
+## Support
+
+Need help with integration?
+
+- **Website**: [WebZeto.com](https://webzeto.com)
+- **Portfolio**: [ShahzadMirza.com](https://shahzadmirza.com)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/shahzad11/cybersource-api/issues)
+
+---
+
+## More PHP Libraries
+
+Check out my other open-source PHP libraries:
+
+| Library | Description | Link |
+|---------|-------------|------|
+| **Authorize.net SIM** | Payment gateway integration | [GitHub](https://github.com/shahzad11/Authorize.net-SIM-Wrapper) |
+| **PHP Gender Predictor** | Predict gender from name | [GitHub](https://github.com/shahzad11/php-gender-predictor-class) |
+| **MySQL CRUD** | Simple database operations | [GitHub](https://github.com/shahzad11/Mysql-CRUD) |
+
+---
+
+## License
+
+This project is licensed under the MIT License - feel free to use it in your personal or commercial projects.
+
+---
+
+**Happy Coding!** 🚀
+
+Built with ❤️ by [WebZeto](https://webzeto.com) & [Shahzad Mirza](https://shahzadmirza.com)
